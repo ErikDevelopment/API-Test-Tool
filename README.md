@@ -1,33 +1,32 @@
 # API Tester
 
-Ein einfacher [API-Tester](https://erikdevelopment.github.io/API-Test-Tool/), mit dem du HTTP-Anfragen (GET, POST, PUT, DELETE, PATCH) an beliebige Endpunkte senden und die Antwort in Echtzeit anzeigen kannst. Das Tool bietet zudem Funktionen zur Authentifizierung, Dateiupload und Header- sowie Body-Verwaltung.
+A simple [API Tester](https://erikdevelopment.github.io/API-Test-Tool/) that allows you to send HTTP requests (GET, POST, PUT, DELETE, PATCH) to any endpoints and view the response in real-time. The tool also provides functions for authentication, file upload, and header as well as body management.
 
 ## Features
 
-- **HTTP-Methoden auswählen**: Sende GET, POST, PUT, DELETE oder PATCH-Anfragen.
-- **Benutzerdefinierte Header**: Füge benutzerdefinierte Header im JSON-Format hinzu.
-- **Request Body**: Definiere den Body für POST/PUT/PATCH-Anfragen.
-- **Dateiupload für Authentifizierung**: Lade eine Datei hoch, um eine Authentifizierung zu ermöglichen.
-- **Benutzername und API-Key**: Optionales Textfeld für Benutzername und API-Key zur Authentifizierung.
-- **Responsiv**: Funktioniert auf Desktop und mobilen Geräten.
+- **Select HTTP Methods**: Send GET, POST, PUT, DELETE, or PATCH requests.
+- **Custom Headers**: Add custom headers in JSON format.
+- **Request Body**: Define the body for POST/PUT/PATCH requests.
+- **File Upload for Authentication**: Upload a file to enable authentication.
+- **Username and API Key**: Optional text fields for username and API key for authentication.
+- **Responsive**: Works on both desktop and mobile devices.
 
-## Verwendung
+## How to Use
 
-1. **HTTP-Methode auswählen**: Wähle eine der verfügbaren HTTP-Methoden (GET, POST, PUT, DELETE, PATCH) aus der Dropdown-Liste aus.
-2. **API-URL angeben**: Gib die URL des gewünschten API-Endpunkts in das Textfeld ein.
-3. **Header hinzufügen**: Gib benutzerdefinierte Header im JSON-Format ein. Beispiel:
+1. **Select HTTP Method**: Choose one of the available HTTP methods (GET, POST, PUT, DELETE, PATCH) from the dropdown list.
+2. **Enter API URL**: Input the URL of the desired API endpoint into the text field.
+3. **Add Headers**: Input custom headers in JSON format. Example:
    ```json
    {
      "Content-Type": "application/json"
    }
    ```
-4. **Request Body(Optional)**: Gib den Body deiner Anfrage (z. B. JSON) für POST/PUT/PATCH-Anfragen ein.
-5. **Dateiupload für Authentifizierung**: Wähle eine Datei aus, um sie zu senden (optional, je nach API-Anforderung).
-6. **Benutzername und API-Key**: Gib optional einen Benutzernamen und API-Key für die Authentifizierung ein.
+4. **Request Body (Optional)**: Input the body of your request (e.g., JSON) for POST/PUT/PATCH requests.
+5. **File Upload for Authentication**: Select a file to upload (optional, depending on API requirements).
+6. **Username and API Key**: Optionally, enter a username and API key for authentication.
 
-Drücke den **"Send Request"-Button**, um die Anfrage abzusenden. Die Antwort wird im unteren Bereich angezeigt, einschließlich:
+Click the **"Send Request"** button to submit the request. The response will be displayed in the lower section, including:
 
-- **Statuscode** (grün oder rot, je nach Erfolg oder Fehler)
-- **Response-Headers**: Die Header der Antwort im JSON-Format
-- **Response-Body**: Der Inhalt der Antwort im JSON-Format (bei erfolgreichem Abruf)
-
+- **Status Code** (green or red, depending on success or failure)
+- **Response Headers**: The headers of the response in JSON format
+- **Response Body**: The content of the response in JSON format (if successfully fetched)
