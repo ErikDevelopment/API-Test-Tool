@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>API Tester</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="navbar-content">
+                <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 18 22 12 16 6"></path>
+                    <path d="M8 6 2 12 8 18"></path>
+                </svg>
+                <h1 class="title">API Tester</h1>
+            </div>
+        </nav>
+
+        <main class="container">
+            <div class="grid">
+                <!-- Request Form -->
+                <div>
+                    <form id="apiForm">
+                        <!-- URL and Method -->
+                        <div class="form-group">
+                            <div class="url-group">
+                                <select class="method-select" id="method">
+                                    <option value="GET">GET</option>
+                                    <option value="POST">POST</option>
+                                    <option value="PUT">PUT</option>
+                                    <option value="DELETE">DELETE</option>
+                                    <option value="PATCH">PATCH</option>
+                                </select>
+                                <input type="url" id="url" class="url-input" placeholder="Enter API endpoint URL" required />
+                            </div>
+                        </div>
+
+                        <!-- Headers -->
+                        <div class="form-group">
+                            <label class="form-label" for="headers">Headers (JSON)</label>
+                            <textarea id="headers" class="textarea" placeholder='{"Content-Type": "application/json"}'></textarea>
+                        </div>
+
+                        <!-- Request Body -->
+                        <div class="form-group">
+                            <label class="form-label" for="body">Request Body</label>
+                            <textarea id="body" class="textarea" placeholder="Enter request body..."></textarea>
+                        </div>
+
+                        <div class="file-upload-container">
+                            <label for="file" class="button">
+                                Choose a file
+                            </label>
+                            <input type="file" id="file" name="file" class="file-input" />
+                            <span id="file-name" class="file-name"></span>
+                            <!-- Zeigt den Dateinamen an -->
+                            <button type="button" id="delete-file" class="delete-button" style="display: none;">Delete File</button>
+                            <!-- Delete-Button -->
+                        </div>
+
+                        <!-- Authentication -->
+                        <div class="form-group auth-section">
+                            <label class="form-label" for="username">Authentication (Optional)</label>
+                            <div class="auth-input-group">
+                                <input type="text" id="username" class="auth-input" placeholder="Username" />
+                                <input type="password" id="apikey" class="auth-input" placeholder="Password / API Key" />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="button">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m22 2-7 20-4-9-9-4Z"></path>
+                                <path d="M22 2 11 13"></path>
+                            </svg>
+                            Send Request
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Response Section -->
+                <div class="response-section">
+                    <div class="response-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-500">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        <h2 class="response-title">Response</h2>
+                    </div>
+
+                    <div id="response" class="response-empty">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 1rem;">
+                            <path d="M16 18 22 12 16 6"></path>
+                            <path d="M8 6 2 12 8 18"></path>
+                        </svg>
+                        <p>Send a request to see the response here</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            document.getElementById("file").addEventListener("change", (e) => {
+                const fileName = e.target.files[0]?.name; // Den Dateinamen holen
+                const fileNameElement = document.getElementById("file-name");
+                const deleteButton = document.getElementById("delete-file");
+                const fileUploadContainer = document.querySelector(".file-upload-container");
+
+                if (fileName) {
+                    fileNameElement.textContent = `Selected file: ${fileName}`;
+                    deleteButton.style.display = "inline-block"; // Zeige den "Delete"-Button an
+                    fileUploadContainer.classList.add("file-selected"); // Animation aktivieren
+                } else {
+                    fileNameElement.textContent = ""; // Kein Dateiname, wenn keine Datei ausgewählt
+                    deleteButton.style.display = "none"; // Verstecke den "Delete"-Button
+                    fileUploadContainer.classList.remove("file-selected"); // Animation zurücksetzen
+                }
+            });
+
+            // Lösche die ausgewählte Datei
+            document.getElementById("delete-file").addEventListener("click", () => {
+                const fileInput = document.getElementById("file");
+                const fileNameElement = document.getElementById("file-name");
+                const deleteButton = document.getElementById("delete-file");
+                const fileUploadContainer = document.querySelector(".file-upload-container");
+
+                // Rücksetzen des Dateieingabefelds
+                fileInput.value = "";
+                fileNameElement.textContent = "";
+                deleteButton.style.display = "none"; // Verstecke den "Delete"-Button
+                fileUploadContainer.classList.remove("file-selected"); // Entferne Animation
+            });
+
+            document.getElementById("apiForm").addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const method = document.getElementById("method").value;
+                const url = document.getElementById("url").value;
+                const headers = document.getElementById("headers").value;
+                const body = document.getElementById("body").value;
+                const fileInput = document.getElementById("file");
+                const username = document.getElementById("username").value;
+                const apikey = document.getElementById("apikey").value;
+                const responseElement = document.getElementById("response");
+
+                try {
+                    const options = {
+                        method,
+                        headers: headers ? JSON.parse(headers) : {},
+                    };
+
+                    // Add authentication header if provided
+                    if (username || apikey) {
+                        const auth = btoa(`${username}:${apikey}`);
+                        options.headers["Authorization"] = `Basic ${auth}`;
+                    }
+
+                    // Add body or file for non-GET requests
+                    if (method !== "GET" && method !== "HEAD") {
+                        if (fileInput.files.length > 0) {
+                            const formData = new FormData();
+                            formData.append("file", fileInput.files[0]);
+
+                            if (body) {
+                                formData.append("body", body);
+                            }
+
+                            options.body = formData;
+                        } else if (body) {
+                            options.body = body;
+                        }
+                    }
+
+                    const response = await fetch(url, options);
+                    const data = await response.json();
+
+                    // Format response headers and body
+                    const formattedHeaders = JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2);
+                    const formattedBody = JSON.stringify(data, null, 2);
+
+                    responseElement.innerHTML = `
+      <div style="margin-bottom: 1rem;">
+        <span style="font-weight: 500; font-size: 0.875rem;">Status: </span>
+        <span style="
+          background: ${response.ok ? "rgba(34, 197, 94, 0.2)" : "rgba(239, 68, 68, 0.2)"}; 
+          color: ${response.ok ? "rgb(34, 197, 94)" : "rgb(239, 68, 68)"}; 
+          padding: 0.25rem 0.75rem; 
+          border-radius: 9999px; 
+          font-size: 0.75rem; 
+          font-weight: 500;">
+          ${response.status}
+        </span>
+      </div>
+      <div style="margin-bottom: 1rem;">
+        <h3 style="font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Response Headers:</h3>
+        <pre class="response-content">${formattedHeaders}</pre>
+      </div>
+      <div>
+        <h3 style="font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Response Body:</h3>
+        <pre class="response-content">${formattedBody}</pre>
+      </div>
+    `;
+                } catch (error) {
+                    responseElement.innerHTML = `
+      <div class="response-content" style="color: rgb(239, 68, 68);">
+        Error: ${error.message}
+      </div>
+    `;
+                }
+            });
+        </script>
+    </body>
+</html>
